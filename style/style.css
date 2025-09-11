@@ -1202,7 +1202,7 @@ body {
 }
 
 .logo-svg {
-    width: 120px;
+    width: 200px;
     height: 40px;
     transition: transform 0.3s ease;
 }
@@ -1363,6 +1363,7 @@ body {
     }
     .mobile-menu-toggle {
         display: flex;
+        position: fixed;
     }
     .header-content {
         justify-content: space-between;
