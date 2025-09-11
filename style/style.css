@@ -179,9 +179,15 @@ body {
 
 /* Мобильное меню */
 
+
+/* Мобильное меню - скрыто по умолчанию */
+
 .mobile-menu {
     display: none;
 }
+
+
+/* Бургер-иконка */
 
 .mobile-menu-toggle {
     display: none;
@@ -191,6 +197,9 @@ body {
     padding: 8px;
     z-index: 1002;
     position: relative;
+    background: #f8fafc;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
 }
 
 .mobile-menu-toggle span {
@@ -204,6 +213,7 @@ body {
 
 .mobile-menu-toggle.active span:nth-child(1) {
     transform: rotate(45deg) translate(6px, 6px);
+    background: #2563eb;
 }
 
 .mobile-menu-toggle.active span:nth-child(2) {
@@ -212,7 +222,11 @@ body {
 
 .mobile-menu-toggle.active span:nth-child(3) {
     transform: rotate(-45deg) translate(6px, -6px);
+    background: #2563eb;
 }
+
+
+/* Оверлей */
 
 .mobile-menu-overlay {
     position: fixed;
@@ -220,12 +234,12 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(5px);
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
     z-index: 999;
     opacity: 0;
     visibility: hidden;
-    transition: all 0.3s ease;
+    transition: all 0.4s ease;
 }
 
 .mobile-menu-overlay.active {
@@ -233,46 +247,59 @@ body {
     visibility: visible;
 }
 
+
+/* Контент меню */
+
 .mobile-menu-content {
     position: fixed;
     top: 0;
     right: -100%;
     width: 320px;
     height: 100%;
-    background: white;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
     z-index: 1000;
     padding: 20px;
     overflow-y: auto;
-    transition: right 0.4s ease;
-    box-shadow: -5px 0 25px rgba(0, 0, 0, 0.1);
+    transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: -5px 0 30px rgba(0, 0, 0, 0.15);
 }
 
 .mobile-menu-content.active {
     right: 0;
 }
 
+
+/* Шапка меню */
+
 .mobile-menu-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-bottom: 20px;
-    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 25px;
+    border-bottom: 2px solid #e5e7eb;
     margin-bottom: 30px;
 }
 
 .mobile-menu-close {
-    background: none;
+    background: #f3f4f6;
     border: none;
-    font-size: 1.5rem;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
     color: #374151;
     cursor: pointer;
-    padding: 5px;
-    transition: color 0.3s ease;
+    transition: all 0.3s ease;
 }
 
 .mobile-menu-close:hover {
-    color: #ef4444;
+    background: #ef4444;
+    color: white;
+    transform: rotate(90deg);
 }
+
+
+/* Навигация */
 
 .mobile-nav-menu {
     list-style: none;
@@ -281,90 +308,119 @@ body {
 }
 
 .mobile-nav-menu li {
-    margin-bottom: 15px;
+    margin-bottom: 12px;
 }
 
 .mobile-nav-link {
     display: flex;
     align-items: center;
     gap: 15px;
-    padding: 15px 20px;
+    padding: 16px 20px;
     text-decoration: none;
     color: #374151;
     font-weight: 500;
     border-radius: 12px;
     transition: all 0.3s ease;
-    background: #f8fafc;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
 .mobile-nav-link:hover {
     background: #2563eb;
     color: white;
-    transform: translateX(5px);
+    transform: translateX(8px);
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+    border-color: #2563eb;
 }
 
 .mobile-nav-link i {
     width: 20px;
     text-align: center;
     font-size: 1.2rem;
+    transition: transform 0.3s ease;
 }
+
+.mobile-nav-link:hover i {
+    transform: scale(1.2);
+}
+
+
+/* Социальные сети */
 
 .mobile-social {
     margin-bottom: 30px;
+    padding: 20px;
+    background: #f8fafc;
+    border-radius: 16px;
+    border: 1px solid #e5e7eb;
 }
 
 .mobile-social-title {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     color: #6b7280;
     margin-bottom: 15px;
-    font-weight: 500;
+    font-weight: 600;
+    text-align: center;
 }
 
 .mobile-social-links {
     display: flex;
-    gap: 12px;
+    justify-content: center;
+    gap: 15px;
 }
 
 .mobile-social-link {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 45px;
-    height: 45px;
-    background: #f3f4f6;
+    width: 50px;
+    height: 50px;
+    background: white;
     border-radius: 12px;
     color: #374151;
     text-decoration: none;
     transition: all 0.3s ease;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .mobile-social-link:hover {
     background: #2563eb;
     color: white;
-    transform: translateY(-2px);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
 }
 
+
+/* Контакты */
+
 .mobile-contacts {
-    border-top: 1px solid #e5e7eb;
-    padding-top: 20px;
+    border-top: 2px solid #e5e7eb;
+    padding-top: 25px;
 }
 
 .mobile-contact-item {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 15px;
+    gap: 15px;
+    margin-bottom: 18px;
     color: #374151;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
+    padding: 12px 15px;
+    background: #f8fafc;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
 }
 
 .mobile-contact-item i {
     color: #2563eb;
     width: 20px;
+    font-size: 1.1rem;
 }
 
 
-/* Анимации для мобильного меню */
+/* Анимации */
 
 @keyframes slideInRight {
     from {
@@ -377,9 +433,18 @@ body {
     }
 }
 
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
 .mobile-nav-link {
     opacity: 0;
-    animation: slideInRight 0.4s ease forwards;
+    animation: slideInRight 0.5s ease forwards;
 }
 
 .mobile-nav-link:nth-child(1) {
@@ -396,7 +461,7 @@ body {
 
 .mobile-social-link {
     opacity: 0;
-    animation: slideInRight 0.4s ease forwards;
+    animation: fadeIn 0.5s ease forwards;
 }
 
 .mobile-social-link:nth-child(1) {
@@ -417,7 +482,7 @@ body {
 
 .mobile-contact-item {
     opacity: 0;
-    animation: slideInRight 0.4s ease forwards;
+    animation: slideInRight 0.5s ease forwards;
 }
 
 .mobile-contact-item:nth-child(1) {
@@ -429,15 +494,16 @@ body {
 }
 
 
-/* Адаптивность */
+/* Адаптивность - появляется на 1280px и меньше */
 
-@media (max-width: 768px) {
+@media (max-width: 1280px) {
     .mobile-menu {
         display: block;
     }
     .mobile-menu-toggle {
         display: flex;
     }
+    /* Скрываем обычную навигацию и соцсети */
     .navigation,
     .social-media {
         display: none;
@@ -447,18 +513,87 @@ body {
     }
 }
 
+
+/* Адаптация под мобильные устройства */
+
+@media (max-width: 768px) {
+    .mobile-menu-content {
+        width: 100%;
+        right: -100%;
+    }
+    .mobile-menu-content.active {
+        right: 0;
+    }
+    .mobile-nav-link {
+        padding: 18px 20px;
+        font-size: 1.1rem;
+    }
+    .mobile-social-links {
+        gap: 12px;
+    }
+    .mobile-social-link {
+        width: 55px;
+        height: 55px;
+    }
+    .mobile-contact-item {
+        font-size: 1rem;
+        padding: 15px;
+    }
+}
+
 @media (max-width: 480px) {
     .mobile-menu-content {
-        width: 280px;
         padding: 15px;
+    }
+    .mobile-menu-header {
+        padding-bottom: 20px;
+        margin-bottom: 25px;
+    }
+    .mobile-nav-link {
+        padding: 16px 18px;
+        font-size: 1rem;
+    }
+    .mobile-social {
+        padding: 15px;
+        margin-bottom: 25px;
+    }
+    .mobile-social-link {
+        width: 50px;
+        height: 50px;
+    }
+    .mobile-contact-item {
+        font-size: 0.9rem;
+        padding: 12px;
+    }
+    .mobile-menu-close {
+        width: 35px;
+        height: 35px;
+        font-size: 1.1rem;
+    }
+}
+
+
+/* Портретная ориентация на мобильных */
+
+@media (max-width: 768px) and (orientation: portrait) {
+    .mobile-menu-content {
+        padding-bottom: 30px;
+    }
+}
+
+
+/* Ландшафтная ориентация на мобильных */
+
+@media (max-width: 900px) and (orientation: landscape) {
+    .mobile-menu-content {
+        overflow-y: auto;
+        padding-bottom: 20px;
+    }
+    .mobile-nav-menu li {
+        margin-bottom: 8px;
     }
     .mobile-nav-link {
         padding: 12px 15px;
-        font-size: 0.9rem;
-    }
-    .mobile-social-link {
-        width: 40px;
-        height: 40px;
     }
 }
 
