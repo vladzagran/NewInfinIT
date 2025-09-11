@@ -213,7 +213,7 @@ body {
 
 .mobile-menu-toggle.active span:nth-child(1) {
     transform: rotate(45deg) translate(6px, 6px);
-    background: #2563eb;
+    background: #ffffff;
 }
 
 .mobile-menu-toggle.active span:nth-child(2) {
@@ -222,7 +222,7 @@ body {
 
 .mobile-menu-toggle.active span:nth-child(3) {
     transform: rotate(-45deg) translate(6px, -6px);
-    background: #2563eb;
+    background: #ffffff;
 }
 
 
