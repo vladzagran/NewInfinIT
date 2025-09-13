@@ -1324,7 +1324,7 @@ body {
         gap: 25px;
     }
     .service-card {
-        max-width: 500px;
+        max-width: 1000px;
         margin: 0 auto;
     }
     .about-content {
