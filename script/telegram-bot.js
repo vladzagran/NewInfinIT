@@ -1,8 +1,8 @@
 // telegram-bot.js
 class TelegramBot {
     constructor() {
-        this.botToken = 'YO8102484893:AAFCwlGvzjXO80C8RDra2p2UrVbGKlsG3IM';
-        this.chatId = '-4897498662';
+        this.botToken = '6998957768:AAHU2-s7MQdUW3AdYs-_-fOvPv3sFC_wJrA';
+        this.chatId = '6998957768';
         this.apiUrl = `https://api.telegram.org/bot${this.botToken}/sendMessage`;
     }
 
