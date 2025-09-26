@@ -354,3 +354,125 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.classList.add('no-touch-device');
     }
 });
+
+// Добавьте этот код в конец файла script.js, перед последней закрывающей скобкой
+
+// Инициализация Telegram бота для формы
+function initContactForm() {
+    const contactForm = document.querySelector('.contact-form form');
+
+    if (!contactForm) return;
+
+    contactForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        // Получаем данные формы
+        const formData = {
+            name: this.querySelector('input[type="text"]').value,
+            phone: this.querySelector('input[type="tel"]').value,
+            email: this.querySelector('input[type="email"]').value,
+            message: this.querySelector('textarea').value
+        };
+
+        // Валидация
+        if (!this.checkValidity()) {
+            this.reportValidity();
+            return;
+        }
+
+        // Показываем индикатор загрузки
+        const submitButton = this.querySelector('button[type="submit"]');
+        const originalText = submitButton.innerHTML;
+        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Отправка...';
+        submitButton.disabled = true;
+
+        try {
+            // Отправляем в Telegram
+            const result = await telegramBot.sendMessage(formData);
+
+            if (result.success) {
+                // Успешная отправка
+                this.showSuccessMessage('Сообщение успешно отправлено!');
+                this.reset(); // Очищаем форму
+            } else {
+                throw new Error(result.message);
+            }
+        } catch (error) {
+            this.showErrorMessage(error.message || 'Ошибка отправки сообщения');
+        } finally {
+            // Восстанавливаем кнопку
+            submitButton.innerHTML = originalText;
+            submitButton.disabled = false;
+        }
+    });
+
+    // Добавляем методы для показа сообщений
+    contactForm.showSuccessMessage = function(message) {
+        this.showStatusMessage(message, 'success');
+    };
+
+    contactForm.showErrorMessage = function(message) {
+        this.showStatusMessage(message, 'error');
+    };
+
+    contactForm.showStatusMessage = function(message, type) {
+        // Удаляем предыдущее сообщение
+        const existingMessage = this.querySelector('.form-status');
+        if (existingMessage) {
+            existingMessage.remove();
+        }
+
+        // Создаем новое сообщение
+        const statusDiv = document.createElement('div');
+        statusDiv.className = `form-status form-status-${type}`;
+        statusDiv.innerHTML = `
+            <i class="fas fa-${type === 'success' ? 'check' : 'exclamation'}-circle"></i>
+            ${message}
+        `;
+
+        // Добавляем стили
+        statusDiv.style.cssText = `
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 500;
+            animation: fadeIn 0.3s ease;
+            background: ${type === 'success' ? '#d4edda' : '#f8d7da'};
+            color: ${type === 'success' ? '#155724' : '#721c24'};
+            border: 1px solid ${type === 'success' ? '#c3e6cb' : '#f5c6cb'};
+        `;
+
+        this.appendChild(statusDiv);
+
+        // Автоматически скрываем через 5 секунд
+        setTimeout(() => {
+            statusDiv.style.animation = 'fadeOut 0.3s ease';
+            setTimeout(() => statusDiv.remove(), 300);
+        }, 5000);
+    };
+}
+
+// Добавьте CSS анимации в style.css
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes fadeOut {
+        from { opacity: 1; transform: translateY(0); }
+        to { opacity: 0; transform: translateY(-10px); }
+    }
+    
+    .form-status i {
+        margin-right: 8px;
+    }
+`;
+document.head.appendChild(style);
+
+// Инициализируем форму при загрузке
+document.addEventListener('DOMContentLoaded', function() {
+    initContactForm();
+});

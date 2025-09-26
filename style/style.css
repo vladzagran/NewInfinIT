@@ -1528,3 +1528,28 @@ body {
 .nav-menu.active .nav-link:nth-child(4) {
     animation-delay: 0.4s;
 }
+
+
+/* Стили для валидации формы */
+
+.contact-form input:invalid,
+.contact-form textarea:invalid {
+    border-color: #dc3545;
+}
+
+.contact-form input:valid,
+.contact-form textarea:valid {
+    border-color: #28a745;
+}
+
+.contact-form .error-message {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 5px;
+    display: none;
+}
+
+.contact-form input:invalid+.error-message,
+.contact-form textarea:invalid+.error-message {
+    display: block;
+}
