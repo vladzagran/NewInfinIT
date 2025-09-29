@@ -1,0 +1,478 @@
+document.addEventListener('DOMContentLoaded', function() {
+    // Мобильное меню
+    const menuToggle = document.querySelector('.mobile-menu-toggle');
+    const navMenu = document.querySelector('.nav-menu');
+    const socialMedia = document.querySelector('.social-media');
+
+    menuToggle.addEventListener('click', function() {
+        navMenu.classList.toggle('active');
+        socialMedia.classList.toggle('active');
+        menuToggle.classList.toggle('active');
+
+        // Добавляем плавное появление пунктов меню
+        if (navMenu.classList.contains('active')) {
+            const navItems = navMenu.querySelectorAll('.nav-link');
+            navItems.forEach((item, index) => {
+                item.style.animation = `fadeInUp 0.3s ease forwards ${index * 0.1}s`;
+            });
+        }
+    });
+
+    // Слайдер отзывов
+    const track = document.querySelector('.reviews-track');
+    const prevBtn = document.querySelector('.prev-btn');
+    const nextBtn = document.querySelector('.next-btn');
+    const cards = document.querySelectorAll('.review-card');
+    const indicators = document.querySelectorAll('.indicator');
+    let currentPosition = 0;
+    let cardsPerView = 3;
+    let maxPosition = Math.ceil(cards.length / cardsPerView) - 1;
+
+    // Определяем количество карточек в зависимости от ширины экрана
+    function updateCardsPerView() {
+        if (window.innerWidth < 768) {
+            cardsPerView = 1;
+        } else if (window.innerWidth < 1200) {
+            cardsPerView = 2;
+        } else {
+            cardsPerView = 3;
+        }
+        maxPosition = Math.ceil(cards.length / cardsPerView) - 1;
+        updateSlider();
+    }
+
+    function updateSlider() {
+        const cardWidth = cards[0].offsetWidth + 30;
+        track.style.transform = `translateX(-${currentPosition * cardWidth * cardsPerView}px)`;
+        updateButtons();
+        updateIndicators();
+    }
+
+    function updateButtons() {
+        prevBtn.disabled = currentPosition === 0;
+        nextBtn.disabled = currentPosition >= maxPosition;
+    }
+
+    function updateIndicators() {
+        indicators.forEach((indicator, index) => {
+            indicator.classList.toggle('active', index === currentPosition);
+        });
+    }
+
+    nextBtn.addEventListener('click', function() {
+        if (currentPosition < maxPosition) {
+            currentPosition++;
+            updateSlider();
+        }
+    });
+
+    prevBtn.addEventListener('click', function() {
+        if (currentPosition > 0) {
+            currentPosition--;
+            updateSlider();
+        }
+    });
+
+    // Клик по индикаторам
+    indicators.forEach((indicator, index) => {
+        indicator.addEventListener('click', function() {
+            currentPosition = index;
+            updateSlider();
+        });
+    });
+
+    // Обработка свайпов на мобильных устройствах
+    let startX = 0;
+    let endX = 0;
+
+    track.addEventListener('touchstart', function(e) {
+        startX = e.touches[0].clientX;
+    });
+
+    track.addEventListener('touchend', function(e) {
+        endX = e.changedTouches[0].clientX;
+        handleSwipe();
+    });
+
+    function handleSwipe() {
+        const swipeThreshold = 50;
+        const diff = startX - endX;
+
+        if (Math.abs(diff) > swipeThreshold) {
+            if (diff > 0 && currentPosition < maxPosition) {
+                // Свайп влево
+                currentPosition++;
+            } else if (diff < 0 && currentPosition > 0) {
+                // Свайп вправо
+                currentPosition--;
+            }
+            updateSlider();
+        }
+    }
+
+    // Плавная прокрутка к секциям
+    function initSmoothScroll() {
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                const targetId = this.getAttribute('href');
+                const targetSection = document.querySelector(targetId);
+
+                if (targetSection) {
+                    // Закрываем мобильное меню если оно открыто
+                    if (navMenu.classList.contains('active')) {
+                        navMenu.classList.remove('active');
+                        socialMedia.classList.remove('active');
+                        menuToggle.classList.remove('active');
+                    }
+
+                    // Вычисляем позицию с учетом фиксированной шапки
+                    const headerHeight = document.querySelector('.header').offsetHeight;
+                    const targetPosition = targetSection.offsetTop - headerHeight - 20;
+
+                    // Плавная прокрутка
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+
+                    // Добавляем активный класс к текущей ссылке
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+
+                    // Обновляем URL без перезагрузки страницы
+                    history.pushState(null, null, targetId);
+                }
+            });
+        });
+
+        // Подсветка активного раздела при скролле
+        function updateActiveSection() {
+            const sections = document.querySelectorAll('section');
+            const headerHeight = document.querySelector('.header').offsetHeight;
+            const scrollPosition = window.scrollY + headerHeight + 100;
+
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.offsetHeight;
+                const sectionId = section.getAttribute('id');
+
+                if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === `#${sectionId}`) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }
+
+        // Обработчик скролла
+        window.addEventListener('scroll', updateActiveSection);
+        window.addEventListener('load', updateActiveSection);
+    }
+
+    // Автопрокрутка отзывов (опционально)
+    let autoScroll = setInterval(function() {
+        if (currentPosition < maxPosition) {
+            currentPosition++;
+        } else {
+            currentPosition = 0;
+        }
+        updateSlider();
+    }, 5000);
+
+    // Останавливаем автопрокрутку при наведении
+    const sliderContainer = document.querySelector('.reviews-container');
+    sliderContainer.addEventListener('mouseenter', function() {
+        clearInterval(autoScroll);
+    });
+
+    sliderContainer.addEventListener('mouseleave', function() {
+        autoScroll = setInterval(function() {
+            if (currentPosition < maxPosition) {
+                currentPosition++;
+            } else {
+                currentPosition = 0;
+            }
+            updateSlider();
+        }, 5000);
+    });
+
+    // Функционал мобильного меню
+    function initMobileMenu() {
+        const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+        const mobileMenuOverlay = document.querySelector('.mobile-menu-overlay');
+        const mobileMenuContent = document.querySelector('.mobile-menu-content');
+        const mobileMenuClose = document.querySelector('.mobile-menu-close');
+        const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+        const body = document.body;
+
+        function openMenu() {
+            mobileMenuToggle.classList.add('active');
+            mobileMenuOverlay.classList.add('active');
+            mobileMenuContent.classList.add('active');
+            body.style.overflow = 'hidden';
+            document.addEventListener('touchmove', preventScroll, { passive: false });
+        }
+
+        function closeMenu() {
+            mobileMenuToggle.classList.remove('active');
+            mobileMenuOverlay.classList.remove('active');
+            mobileMenuContent.classList.remove('active');
+            body.style.overflow = 'auto';
+            document.removeEventListener('touchmove', preventScroll);
+        }
+
+        function preventScroll(e) {
+            e.preventDefault();
+        }
+
+        // Открытие меню
+        mobileMenuToggle.addEventListener('click', openMenu);
+
+        // Закрытие меню
+        mobileMenuClose.addEventListener('click', closeMenu);
+        mobileMenuOverlay.addEventListener('click', closeMenu);
+
+        // Закрытие при клике на ссылку
+        mobileNavLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                const targetId = this.getAttribute('href');
+                const targetSection = document.querySelector(targetId);
+
+                if (targetSection) {
+                    closeMenu();
+
+                    // Плавная прокрутка с задержкой для анимации закрытия меню
+                    setTimeout(() => {
+                        const headerHeight = document.querySelector('.header').offsetHeight;
+                        const targetPosition = targetSection.offsetTop - headerHeight - 20;
+
+                        window.scrollTo({
+                            top: targetPosition,
+                            behavior: 'smooth'
+                        });
+
+                        history.pushState(null, null, targetId);
+                    }, 400);
+                }
+            });
+        });
+
+        // Закрытие при нажатии Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && mobileMenuContent.classList.contains('active')) {
+                closeMenu();
+            }
+        });
+
+        // Предотвращаем скролл тела страницы при открытом меню на мобильных
+        mobileMenuContent.addEventListener('touchstart', function(e) {
+            this.allowUp = (this.scrollTop > 0);
+            this.allowDown = (this.scrollTop < this.scrollHeight - this.clientHeight);
+            this.prevTop = null;
+            this.prevBot = null;
+            this.lastY = e.touches[0].clientY;
+        });
+
+        mobileMenuContent.addEventListener('touchmove', function(e) {
+            const up = (e.touches[0].clientY > this.lastY);
+            const down = !up;
+            this.lastY = e.touches[0].clientY;
+
+            if ((up && this.allowUp) || (down && this.allowDown)) {
+                e.stopPropagation();
+            } else {
+                e.preventDefault();
+            }
+        });
+    }
+
+    // Анимация появления футера при скролле
+    function initFooterAnimation() {
+        const footer = document.querySelector('.footer');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    footer.style.opacity = '1';
+                    footer.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        observer.observe(footer);
+    }
+
+    // Добавляем стили для анимации футера
+    const style = document.createElement('style');
+    style.textContent = `
+        .footer {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease;
+        }
+    `;
+    document.head.appendChild(style);
+
+    // Инициализация
+    updateCardsPerView();
+    updateButtons();
+    updateIndicators();
+    initSmoothScroll();
+    initFooterAnimation();
+
+    // Проверяем, если это мобильное устройство или разрешение <= 1280px
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+    if (isMobile || window.innerWidth <= 1280) {
+        initMobileMenu();
+    }
+
+    // Обновление при изменении размера окна
+    window.addEventListener('resize', function() {
+        updateCardsPerView();
+
+        // Реинициализация мобильного меню при изменении размера
+        const isMobileNow = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+        if (isMobileNow || window.innerWidth <= 1280) {
+            initMobileMenu();
+        }
+    });
+
+    // Инициализация тач-событий для мобильных устройств
+    if ('ontouchstart' in window) {
+        document.body.classList.add('touch-device');
+    } else {
+        document.body.classList.add('no-touch-device');
+    }
+});
+
+// Добавьте этот код в конец файла script.js, перед последней закрывающей скобкой
+
+// Инициализация Telegram бота для формы
+function initContactForm() {
+    const contactForm = document.querySelector('.contact-form form');
+
+    if (!contactForm) return;
+
+    contactForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        // Получаем данные формы
+        const formData = {
+            name: this.querySelector('input[type="text"]').value,
+            phone: this.querySelector('input[type="tel"]').value,
+            email: this.querySelector('input[type="email"]').value,
+            message: this.querySelector('textarea').value
+        };
+
+        // Валидация
+        if (!this.checkValidity()) {
+            this.reportValidity();
+            return;
+        }
+
+        // Показываем индикатор загрузки
+        const submitButton = this.querySelector('button[type="submit"]');
+        const originalText = submitButton.innerHTML;
+        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Отправка...';
+        submitButton.disabled = true;
+
+        try {
+            // Отправляем в Telegram
+            const result = await telegramBot.sendMessage(formData);
+
+            if (result.success) {
+                // Успешная отправка
+                this.showSuccessMessage('Сообщение успешно отправлено!');
+                this.reset(); // Очищаем форму
+            } else {
+                throw new Error(result.message);
+            }
+        } catch (error) {
+            this.showErrorMessage(error.message || 'Ошибка отправки сообщения');
+        } finally {
+            // Восстанавливаем кнопку
+            submitButton.innerHTML = originalText;
+            submitButton.disabled = false;
+        }
+    });
+
+    // Добавляем методы для показа сообщений
+    contactForm.showSuccessMessage = function(message) {
+        this.showStatusMessage(message, 'success');
+    };
+
+    contactForm.showErrorMessage = function(message) {
+        this.showStatusMessage(message, 'error');
+    };
+
+    contactForm.showStatusMessage = function(message, type) {
+        // Удаляем предыдущее сообщение
+        const existingMessage = this.querySelector('.form-status');
+        if (existingMessage) {
+            existingMessage.remove();
+        }
+
+        // Создаем новое сообщение
+        const statusDiv = document.createElement('div');
+        statusDiv.className = `form-status form-status-${type}`;
+        statusDiv.innerHTML = `
+            <i class="fas fa-${type === 'success' ? 'check' : 'exclamation'}-circle"></i>
+            ${message}
+        `;
+
+        // Добавляем стили
+        statusDiv.style.cssText = `
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 500;
+            animation: fadeIn 0.3s ease;
+            background: ${type === 'success' ? '#d4edda' : '#f8d7da'};
+            color: ${type === 'success' ? '#155724' : '#721c24'};
+            border: 1px solid ${type === 'success' ? '#c3e6cb' : '#f5c6cb'};
+        `;
+
+        this.appendChild(statusDiv);
+
+        // Автоматически скрываем через 5 секунд
+        setTimeout(() => {
+            statusDiv.style.animation = 'fadeOut 0.3s ease';
+            setTimeout(() => statusDiv.remove(), 300);
+        }, 5000);
+    };
+}
+
+// Добавьте CSS анимации в style.css
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes fadeOut {
+        from { opacity: 1; transform: translateY(0); }
+        to { opacity: 0; transform: translateY(-10px); }
+    }
+    
+    .form-status i {
+        margin-right: 8px;
+    }
+`;
+document.head.appendChild(style);
+
+// Инициализируем форму при загрузке
+document.addEventListener('DOMContentLoaded', function() {
+    initContactForm();
+});
